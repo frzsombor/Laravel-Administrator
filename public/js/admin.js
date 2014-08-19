@@ -1477,7 +1477,7 @@
 		resizePage: function()
 		{
 			var winHeight = $(window).height(),
-				itemEditHeight = $('form.edit_form').height() + 50,
+				itemEditHeight = $('form.edit_form').height() + 75,
 				usedHeight = winHeight > itemEditHeight ? winHeight - 45 : itemEditHeight,
 				size = window.getComputedStyle(document.body, ':after').getPropertyValue('content');
 
