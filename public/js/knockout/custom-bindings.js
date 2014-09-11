@@ -549,6 +549,19 @@
 			{
 				$element.ckeditor({ language : language });
 				editor = $element.ckeditorGet();
+
+				var kcfinderOptions = adminData.edit_fields[context.field_name].kcfinder;
+				if( typeof kcfinderOptions !== 'undefined' && (kcfinderOptions.enabled || !kcfinderOptions.disabled) ) {
+					var kcfinder_path = site_url+'/packages/frozennode/administrator/js/kcfinder/';
+					var kcfinder_params = '?cms=laraveladministrator&model='+adminData.model_name+'&field='+context.field_name+'&opener=ckeditor';
+					editor.config.filebrowserBrowseUrl      = kcfinder_path+'browse.php'+kcfinder_params+'&type=files';
+					editor.config.filebrowserImageBrowseUrl = kcfinder_path+'browse.php'+kcfinder_params+'&type=images';
+					editor.config.filebrowserFlashBrowseUrl = kcfinder_path+'browse.php'+kcfinder_params+'&type=flash';
+					editor.config.filebrowserUploadUrl      = kcfinder_path+'upload.php'+kcfinder_params+'&type=files';
+					editor.config.filebrowserImageUploadUrl = kcfinder_path+'upload.php'+kcfinder_params+'&type=images';
+					editor.config.filebrowserFlashUploadUrl = kcfinder_path+'upload.php'+kcfinder_params+'&type=flash';
+				}
+
 				editors[options.id] = editor;
 			}
 

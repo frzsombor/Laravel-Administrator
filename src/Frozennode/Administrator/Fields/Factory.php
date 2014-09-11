@@ -18,7 +18,7 @@ class Factory {
 		'key' => 'Frozennode\\Administrator\\Fields\\Key',
 		'text' => 'Frozennode\\Administrator\\Fields\\Text',
 		'textarea' => 'Frozennode\\Administrator\\Fields\\Text',
-		'wysiwyg' => 'Frozennode\\Administrator\\Fields\\Text',
+		'wysiwyg' => 'Frozennode\\Administrator\\Fields\\Wysiwyg',
 		'markdown' => 'Frozennode\\Administrator\\Fields\\Text',
 		'password' => 'Frozennode\\Administrator\\Fields\\Password',
 		'date' => 'Frozennode\\Administrator\\Fields\\Time',

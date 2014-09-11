@@ -16,7 +16,8 @@
     "require": {
         "php": ">=5.3.0",
         "laravel/framework": "4.*",
-        "ckeditor/ckeditor": "4.*"
+        "ckeditor/ckeditor": "4.*",
+        "sunhater/kcfinder": "dev-master",
     },
     "require-dev": {
         "mockery/mockery": "0.8.0"
@@ -33,7 +34,11 @@
         "post-update-cmd": [
             "if [ -d \"public/js/ckeditor/\" ] \nthen \nrm -R public/js/ckeditor/ \nfi ",
             "if [ -d \"vendor/ckeditor/ckeditor/\" ] \nthen \nmv vendor/ckeditor/ckeditor/ public/js/  \nfi",
-            "if [ -d \"vendor/ckeditor/\" ] \nthen \nrm -R vendor/ckeditor/ \nfi"
+            "if [ -d \"vendor/ckeditor/\" ] \nthen \nrm -R vendor/ckeditor/ \nfi",
+            
+            "if [ -d \"public/js/kcfinder/\" ] \nthen \nrm -R public/js/kcfinder/ \nfi ",
+            "if [ -d \"vendor/sunhater/kcfinder/\" ] \nthen \nmv vendor/sunhater/kcfinder/ public/js/  \nfi",
+            "if [ -d \"vendor/sunhater/\" ] \nthen \nrm -R vendor/sunhater/ \nfi"
         ]
     },
     "minimum-stability": "dev"
