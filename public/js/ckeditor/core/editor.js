@@ -942,14 +942,15 @@
 			console.log("CKEditor.setData");
 			if ( callback ) {
 				this.on( 'dataReady', function( evt ) {
-					console.log("CKEditor.setData.callback");
 					evt.removeListener();
+					console.log("CKEditor.setData.callback");
 					callback.call( evt.editor );
 				} );
 			}
 
 			// Fire "setData" so data manipulation may happen.
 			var eventData = { dataValue: data };
+			console.log("Fire \"setData\" so data manipulation may happen.");
 			!internal && this.fire( 'setData', eventData );
 
 			this._.data = eventData.dataValue;

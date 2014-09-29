@@ -597,7 +597,7 @@
 		},
 		update: function (element, valueAccessor, allBindingsAccessor, context)
 		{
-			console.log("wysiwyg.update");
+			console.debug("wysiwyg.update");
 			//handle programmatic updates to the observable
 			var options = valueAccessor(),
 				value = ko.utils.unwrapObservable(options.value),
@@ -609,23 +609,31 @@
 			//if there isn't a value, set the value immediately
 			if (!value)
 			{
-				console.log("there isn't a value, set the value immediately");
+				console.debug("there isn't a value, set the value immediately");
 				$element.html(value);
 				editor.setData(value);
 			}
 			//otherwise pause for a moment and then set it
 			else
 			{
-				console.log("pause for a moment and then set it");
+				console.debug("pause for a moment and then set it");
 				setTimeout(function()
 				{
-					console.log("wysiwyg.update timeout")
+					console.debug("wysiwyg.update timeout");
 					$element.html(value);
 
-					if ($element.data('blur'))
+					if ($element.data('blur')) {
+						console.debug("wysiwyg.update timeout remove-blur");
 						$element.removeData('blur');
-					else
+					}
+					else {
+						console.debug("wysiwyg.update timeout setData");
+						console.debug(editor);
+						console.debug("editor.status: " + editor.status);
+						console.debug("editor.instanceReady: " + editor.instanceReady);
+						console.debug("editor.loaded: " + editor.loaded);
 						editor.setData(value);
+					}
 
 				}, 50);
 			}

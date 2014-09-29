@@ -138,7 +138,7 @@ if ( !CKEDITOR.event ) {
 				// console.log("CKEDITOR.event.return.on");
 				// Create the function to be fired for this listener.
 				function listenerFirer( editor, publisherData, stopFn, cancelFn ) {
-					console.log("CKEDITOR.event.return.on.listenerFirer");
+					console.log("CKEDITOR.event.return.on.listenerFirer "+eventName);
 					var ev = {
 						name: eventName,
 						sender: this,
@@ -156,7 +156,7 @@ if ( !CKEDITOR.event ) {
 				}
 
 				function removeListener() {
-					console.log("CKEDITOR.event.return.on.removeListener");
+					console.log("CKEDITOR.event.return.on.removeListener "+eventName);
 					me.removeListener( eventName, listenerFunction );
 				}
 
@@ -272,7 +272,7 @@ if ( !CKEDITOR.event ) {
 					};
 
 				return function( eventName, data, editor ) {
-					console.log("CKEDITOR.event.return.fire.return");
+					console.log("CKEDITOR.event.return.fire.return "+eventName);
 					// Get the event entry.
 					var event = getPrivate( this )[ eventName ];
 
@@ -285,17 +285,17 @@ if ( !CKEDITOR.event ) {
 					stopped = canceled = 0;
 
 					if ( event ) {
-						console.log("CKEDITOR.event.return.fire.return.if1");
+						console.log("CKEDITOR.event.return.fire.return.if event"+event);
 						var listeners = event.listeners;
 
 						if ( listeners.length ) {
-							console.log("CKEDITOR.event.return.fire.return.if2");
 							// As some listeners may remove themselves from the
 							// event, the original array length is dinamic. So,
 							// let's make a copy of all listeners, so we are
 							// sure we'll call all of them.
 							listeners = listeners.slice( 0 );
 
+							console.log("Loop through all listeners, Call the listener, passing the event data.");
 							var retData;
 							// Loop through all listeners.
 							for ( var i = 0; i < listeners.length; i++ ) {
@@ -348,7 +348,7 @@ if ( !CKEDITOR.event ) {
 			 * canceled, or data returned by one of the listeners.
 			 */
 			fireOnce: function( eventName, data, editor ) {
-				console.log("CKEDITOR.event.return.fireOnce");
+				console.log("CKEDITOR.event.return.fireOnce "+eventName);
 				var ret = this.fire( eventName, data, editor );
 				delete getPrivate( this )[ eventName ];
 				return ret;
@@ -368,7 +368,7 @@ if ( !CKEDITOR.event ) {
 			 * @param {Function} listenerFunction The listener function to unregister.
 			 */
 			removeListener: function( eventName, listenerFunction ) {
-				console.log("CKEDITOR.event.return.removeListener");
+				console.log("CKEDITOR.event.return.removeListener "+eventName);
 				// Get the event entry.
 				var event = getPrivate( this )[ eventName ];
 
@@ -401,7 +401,7 @@ if ( !CKEDITOR.event ) {
 			 * @returns {Boolean}
 			 */
 			hasListeners: function( eventName ) {
-				console.log("CKEDITOR.event.return.hasListeners");
+				console.log("CKEDITOR.event.return.hasListeners "+eventName);
 				var event = getPrivate( this )[ eventName ];
 				return ( event && event.listeners.length > 0 );
 			}
