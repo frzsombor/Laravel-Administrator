@@ -1,13 +1,305 @@
-﻿/*
- Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
- For licensing, see LICENSE.md or http://ckeditor.com/license
-*/
-(function(){function n(a,f,d,b){if(!a.isReadOnly()&&!a.equals(d.editable())){CKEDITOR.dom.element.setMarker(b,a,"bidi_processed",1);for(var b=a,c=d.editable();(b=b.getParent())&&!b.equals(c);)if(b.getCustomData("bidi_processed")){a.removeStyle("direction");a.removeAttribute("dir");return}b="useComputedState"in d.config?d.config.useComputedState:1;if((b?a.getComputedStyle("direction"):a.getStyle("direction")||a.hasAttribute("dir"))!=f)a.removeStyle("direction"),b?(a.removeAttribute("dir"),f!=a.getComputedStyle("direction")&&
-a.setAttribute("dir",f)):a.setAttribute("dir",f),d.forceNextSelectionCheck()}}function r(a,f,d){var b=a.getCommonAncestor(!1,!0),a=a.clone();a.enlarge(d==CKEDITOR.ENTER_BR?CKEDITOR.ENLARGE_LIST_ITEM_CONTENTS:CKEDITOR.ENLARGE_BLOCK_CONTENTS);if(a.checkBoundaryOfElement(b,CKEDITOR.START)&&a.checkBoundaryOfElement(b,CKEDITOR.END)){for(var c;b&&b.type==CKEDITOR.NODE_ELEMENT&&(c=b.getParent())&&1==c.getChildCount()&&!(b.getName()in f);)b=c;return b.type==CKEDITOR.NODE_ELEMENT&&b.getName()in f&&b}}function m(a){return{context:"p",
-allowedContent:{"h1 h2 h3 h4 h5 h6 table ul ol blockquote div tr p div li td":{propertiesOnly:!0,attributes:"dir"}},requiredContent:"p[dir]",refresh:function(a,d){var b=a.config.useComputedState,c,b=void 0===b||b;if(!b){c=d.lastElement;for(var h=a.editable();c&&!(c.getName()in q||c.equals(h));){var e=c.getParent();if(!e)break;c=e}}c=c||d.block||d.blockLimit;c.equals(a.editable())&&(h=a.getSelection().getRanges()[0].getEnclosedNode())&&h.type==CKEDITOR.NODE_ELEMENT&&(c=h);c&&(b=b?c.getComputedStyle("direction"):
-c.getStyle("direction")||c.getAttribute("dir"),a.getCommand("bidirtl").setState("rtl"==b?CKEDITOR.TRISTATE_ON:CKEDITOR.TRISTATE_OFF),a.getCommand("bidiltr").setState("ltr"==b?CKEDITOR.TRISTATE_ON:CKEDITOR.TRISTATE_OFF));b=(d.block||d.blockLimit||a.editable()).getDirection(1);if(b!=(a._.selDir||a.lang.dir))a._.selDir=b,a.fire("contentDirChanged",b)},exec:function(f){var d=f.getSelection(),b=f.config.enterMode,c=d.getRanges();if(c&&c.length){for(var h={},e=d.createBookmarks(),c=c.createIterator(),g,
-j=0;g=c.getNextRange(1);){var i=g.getEnclosedNode();if(!i||i&&!(i.type==CKEDITOR.NODE_ELEMENT&&i.getName()in o))i=r(g,p,b);i&&n(i,a,f,h);var k=new CKEDITOR.dom.walker(g),l=e[j].startNode,m=e[j++].endNode;k.evaluator=function(a){return!!(a.type==CKEDITOR.NODE_ELEMENT&&a.getName()in p&&!(a.getName()==(b==CKEDITOR.ENTER_P?"p":"div")&&a.getParent().type==CKEDITOR.NODE_ELEMENT&&"blockquote"==a.getParent().getName())&&a.getPosition(l)&CKEDITOR.POSITION_FOLLOWING&&(a.getPosition(m)&CKEDITOR.POSITION_PRECEDING+
-CKEDITOR.POSITION_CONTAINS)==CKEDITOR.POSITION_PRECEDING)};for(;i=k.next();)n(i,a,f,h);g=g.createIterator();for(g.enlargeBr=b!=CKEDITOR.ENTER_BR;i=g.getNextParagraph(b==CKEDITOR.ENTER_P?"p":"div");)n(i,a,f,h)}CKEDITOR.dom.element.clearAllMarkers(h);f.forceNextSelectionCheck();d.selectBookmarks(e);f.focus()}}}}function s(a){var f=a==j.setAttribute,d=a==j.removeAttribute,b=/\bdirection\s*:\s*(.*?)\s*(:?$|;)/;return function(c,h){if(!this.isReadOnly()){var e;if(e=c==(f||d?"dir":"direction")||"style"==
-c&&(d||b.test(h))){a:{e=this;for(var g=e.getDocument().getBody().getParent();e;){if(e.equals(g)){e=!1;break a}e=e.getParent()}e=!0}e=!e}if(e&&(e=this.getDirection(1),g=a.apply(this,arguments),e!=this.getDirection(1)))return this.getDocument().fire("dirChanged",this),g}return a.apply(this,arguments)}}var p={table:1,ul:1,ol:1,blockquote:1,div:1},o={},q={};CKEDITOR.tools.extend(o,p,{tr:1,p:1,div:1,li:1});CKEDITOR.tools.extend(q,o,{td:1});CKEDITOR.plugins.add("bidi",{lang:"af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en,en-au,en-ca,en-gb,eo,es,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,ug,uk,vi,zh,zh-cn",
-icons:"bidiltr,bidirtl",hidpi:!0,init:function(a){function f(b,c,d,e,f){a.addCommand(d,new CKEDITOR.command(a,e));a.ui.addButton&&a.ui.addButton(b,{label:c,command:d,toolbar:"bidi,"+f})}if(!a.blockless){var d=a.lang.bidi;f("BidiLtr",d.ltr,"bidiltr",m("ltr"),10);f("BidiRtl",d.rtl,"bidirtl",m("rtl"),20);a.on("contentDom",function(){a.document.on("dirChanged",function(b){a.fire("dirChanged",{node:b.data,dir:b.data.getDirection(1)})})});a.on("contentDirChanged",function(b){var b=(a.lang.dir!=b.data?"add":
-"remove")+"Class",c=a.ui.space(a.config.toolbarLocation);if(c)c[b]("cke_mixed_dir_content")})}}});for(var j=CKEDITOR.dom.element.prototype,l=["setStyle","removeStyle","setAttribute","removeAttribute"],k=0;k<l.length;k++)j[l[k]]=CKEDITOR.tools.override(j[l[k]],s)})();
+﻿/**
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
+ */
+
+( function() {
+	var guardElements = { table: 1, ul: 1, ol: 1, blockquote: 1, div: 1 },
+		directSelectionGuardElements = {},
+		// All guard elements which can have a direction applied on them.
+		allGuardElements = {};
+	CKEDITOR.tools.extend( directSelectionGuardElements, guardElements, { tr: 1, p: 1, div: 1, li: 1 } );
+	CKEDITOR.tools.extend( allGuardElements, directSelectionGuardElements, { td: 1 } );
+
+	function setToolbarStates( editor, path ) {
+		var useComputedState = editor.config.useComputedState,
+			selectedElement;
+
+		useComputedState = useComputedState === undefined || useComputedState;
+
+		// We can use computedState provided by the browser or traverse parents manually.
+		if ( !useComputedState )
+			selectedElement = getElementForDirection( path.lastElement, editor.editable() );
+
+		selectedElement = selectedElement || path.block || path.blockLimit;
+
+		// If we're having BODY here, user probably done CTRL+A, let's try to get the enclosed node, if any.
+		if ( selectedElement.equals( editor.editable() ) ) {
+			var enclosedNode = editor.getSelection().getRanges()[ 0 ].getEnclosedNode();
+			enclosedNode && enclosedNode.type == CKEDITOR.NODE_ELEMENT && ( selectedElement = enclosedNode );
+		}
+
+		if ( !selectedElement )
+			return;
+
+		var selectionDir = useComputedState ? selectedElement.getComputedStyle( 'direction' ) : selectedElement.getStyle( 'direction' ) || selectedElement.getAttribute( 'dir' );
+
+		editor.getCommand( 'bidirtl' ).setState( selectionDir == 'rtl' ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF );
+		editor.getCommand( 'bidiltr' ).setState( selectionDir == 'ltr' ? CKEDITOR.TRISTATE_ON : CKEDITOR.TRISTATE_OFF );
+	}
+
+	function handleMixedDirContent( editor, path ) {
+		var directionNode = path.block || path.blockLimit || editor.editable();
+		var pathDir = directionNode.getDirection( 1 );
+		if ( pathDir != ( editor._.selDir || editor.lang.dir ) ) {
+			editor._.selDir = pathDir;
+			editor.fire( 'contentDirChanged', pathDir );
+		}
+	}
+
+	// Returns element with possibility of applying the direction.
+	// @param node
+	function getElementForDirection( node, root ) {
+		while ( node && !( node.getName() in allGuardElements || node.equals( root ) ) ) {
+			var parent = node.getParent();
+			if ( !parent )
+				break;
+
+			node = parent;
+		}
+
+		return node;
+	}
+
+	function switchDir( element, dir, editor, database ) {
+		if ( element.isReadOnly() || element.equals( editor.editable() ) )
+			return;
+
+		// Mark this element as processed by switchDir.
+		CKEDITOR.dom.element.setMarker( database, element, 'bidi_processed', 1 );
+
+		// Check whether one of the ancestors has already been styled.
+		var parent = element,
+			editable = editor.editable();
+		while ( ( parent = parent.getParent() ) && !parent.equals( editable ) ) {
+			if ( parent.getCustomData( 'bidi_processed' ) ) {
+				// Ancestor style must dominate.
+				element.removeStyle( 'direction' );
+				element.removeAttribute( 'dir' );
+				return;
+			}
+		}
+
+		var useComputedState = ( 'useComputedState' in editor.config ) ? editor.config.useComputedState : 1;
+
+		var elementDir = useComputedState ? element.getComputedStyle( 'direction' ) : element.getStyle( 'direction' ) || element.hasAttribute( 'dir' );
+
+		// Stop if direction is same as present.
+		if ( elementDir == dir )
+			return;
+
+		// Clear direction on this element.
+		element.removeStyle( 'direction' );
+
+		// Do the second check when computed state is ON, to check
+		// if we need to apply explicit direction on this element.
+		if ( useComputedState ) {
+			element.removeAttribute( 'dir' );
+			if ( dir != element.getComputedStyle( 'direction' ) )
+				element.setAttribute( 'dir', dir );
+		} else
+			// Set new direction for this element.
+			element.setAttribute( 'dir', dir );
+
+		editor.forceNextSelectionCheck();
+
+		return;
+	}
+
+	function getFullySelected( range, elements, enterMode ) {
+		var ancestor = range.getCommonAncestor( false, true );
+
+		range = range.clone();
+		range.enlarge( enterMode == CKEDITOR.ENTER_BR ? CKEDITOR.ENLARGE_LIST_ITEM_CONTENTS : CKEDITOR.ENLARGE_BLOCK_CONTENTS );
+
+		if ( range.checkBoundaryOfElement( ancestor, CKEDITOR.START ) && range.checkBoundaryOfElement( ancestor, CKEDITOR.END ) ) {
+			var parent;
+			while ( ancestor && ancestor.type == CKEDITOR.NODE_ELEMENT && ( parent = ancestor.getParent() ) && parent.getChildCount() == 1 && !( ancestor.getName() in elements ) )
+				ancestor = parent;
+
+			return ancestor.type == CKEDITOR.NODE_ELEMENT && ( ancestor.getName() in elements ) && ancestor;
+		}
+	}
+
+	function bidiCommand( dir ) {
+		return {
+			// It applies to a "block-like" context.
+			context: 'p',
+			allowedContent: {
+				'h1 h2 h3 h4 h5 h6 table ul ol blockquote div tr p div li td': {
+					propertiesOnly: true,
+					attributes: 'dir'
+				}
+			},
+			requiredContent: 'p[dir]',
+			refresh: function( editor, path ) {
+				setToolbarStates( editor, path );
+				handleMixedDirContent( editor, path );
+			},
+			exec: function( editor ) {
+				var selection = editor.getSelection(),
+					enterMode = editor.config.enterMode,
+					ranges = selection.getRanges();
+
+				if ( ranges && ranges.length ) {
+					var database = {};
+
+					// Creates bookmarks for selection, as we may split some blocks.
+					var bookmarks = selection.createBookmarks();
+
+					var rangeIterator = ranges.createIterator(),
+						range,
+						i = 0;
+
+					while ( ( range = rangeIterator.getNextRange( 1 ) ) ) {
+						// Apply do directly selected elements from guardElements.
+						var selectedElement = range.getEnclosedNode();
+
+						// If this is not our element of interest, apply to fully selected elements from guardElements.
+						if ( !selectedElement || selectedElement && !( selectedElement.type == CKEDITOR.NODE_ELEMENT && selectedElement.getName() in directSelectionGuardElements ) )
+							selectedElement = getFullySelected( range, guardElements, enterMode );
+
+						selectedElement && switchDir( selectedElement, dir, editor, database );
+
+						var iterator, block;
+
+						// Walker searching for guardElements.
+						var walker = new CKEDITOR.dom.walker( range );
+
+						var start = bookmarks[ i ].startNode,
+							end = bookmarks[ i++ ].endNode;
+
+						walker.evaluator = function( node ) {
+							return !!( node.type == CKEDITOR.NODE_ELEMENT && node.getName() in guardElements && !( node.getName() == ( enterMode == CKEDITOR.ENTER_P ? 'p' : 'div' ) && node.getParent().type == CKEDITOR.NODE_ELEMENT && node.getParent().getName() == 'blockquote' )
+							// Element must be fully included in the range as well. (#6485).
+							&& node.getPosition( start ) & CKEDITOR.POSITION_FOLLOWING && ( ( node.getPosition( end ) & CKEDITOR.POSITION_PRECEDING + CKEDITOR.POSITION_CONTAINS ) == CKEDITOR.POSITION_PRECEDING ) );
+						};
+
+						while ( ( block = walker.next() ) )
+							switchDir( block, dir, editor, database );
+
+						iterator = range.createIterator();
+						iterator.enlargeBr = enterMode != CKEDITOR.ENTER_BR;
+
+						while ( ( block = iterator.getNextParagraph( enterMode == CKEDITOR.ENTER_P ? 'p' : 'div' ) ) )
+							switchDir( block, dir, editor, database );
+					}
+
+					CKEDITOR.dom.element.clearAllMarkers( database );
+
+					editor.forceNextSelectionCheck();
+					// Restore selection position.
+					selection.selectBookmarks( bookmarks );
+
+					editor.focus();
+				}
+			}
+		};
+	}
+
+	CKEDITOR.plugins.add( 'bidi', {
+		lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en,en-au,en-ca,en-gb,eo,es,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
+		icons: 'bidiltr,bidirtl', // %REMOVE_LINE_CORE%
+		hidpi: true, // %REMOVE_LINE_CORE%
+		init: function( editor ) {
+			if ( editor.blockless )
+				return;
+
+			// All buttons use the same code to register. So, to avoid
+			// duplications, let's use this tool function.
+			function addButtonCommand( buttonName, buttonLabel, commandName, commandDef, order ) {
+				editor.addCommand( commandName, new CKEDITOR.command( editor, commandDef ) );
+
+				if ( editor.ui.addButton ) {
+					editor.ui.addButton( buttonName, {
+						label: buttonLabel,
+						command: commandName,
+						toolbar: 'bidi,' + order
+					} );
+				}
+			}
+
+			var lang = editor.lang.bidi;
+
+			addButtonCommand( 'BidiLtr', lang.ltr, 'bidiltr', bidiCommand( 'ltr' ), 10 );
+			addButtonCommand( 'BidiRtl', lang.rtl, 'bidirtl', bidiCommand( 'rtl' ), 20 );
+
+			editor.on( 'contentDom', function() {
+				editor.document.on( 'dirChanged', function( evt ) {
+					editor.fire( 'dirChanged', {
+						node: evt.data,
+						dir: evt.data.getDirection( 1 )
+					} );
+				} );
+			} );
+
+			// Indicate that the current selection is in different direction than the UI.
+			editor.on( 'contentDirChanged', function( evt ) {
+				var func = ( editor.lang.dir != evt.data ? 'add' : 'remove' ) + 'Class';
+				var toolbar = editor.ui.space( editor.config.toolbarLocation );
+				if ( toolbar )
+					toolbar[ func ]( 'cke_mixed_dir_content' );
+			} );
+		}
+	} );
+
+	// If the element direction changed, we need to switch the margins of
+	// the element and all its children, so it will get really reflected
+	// like a mirror. (#5910)
+	function isOffline( el ) {
+		var html = el.getDocument().getBody().getParent();
+		while ( el ) {
+			if ( el.equals( html ) )
+				return false;
+			el = el.getParent();
+		}
+		return true;
+	}
+
+	function dirChangeNotifier( org ) {
+		var isAttribute = org == elementProto.setAttribute,
+			isRemoveAttribute = org == elementProto.removeAttribute,
+			dirStyleRegexp = /\bdirection\s*:\s*(.*?)\s*(:?$|;)/;
+
+		return function( name, val ) {
+			if ( !this.isReadOnly() ) {
+				var orgDir;
+				if ( ( name == ( isAttribute || isRemoveAttribute ? 'dir' : 'direction' ) || name == 'style' && ( isRemoveAttribute || dirStyleRegexp.test( val ) ) ) && !isOffline( this ) ) {
+					orgDir = this.getDirection( 1 );
+					var retval = org.apply( this, arguments );
+					if ( orgDir != this.getDirection( 1 ) ) {
+						this.getDocument().fire( 'dirChanged', this );
+						return retval;
+					}
+				}
+			}
+
+			return org.apply( this, arguments );
+		};
+	}
+
+	var elementProto = CKEDITOR.dom.element.prototype,
+		methods = [ 'setStyle', 'removeStyle', 'setAttribute', 'removeAttribute' ];
+	for ( var i = 0; i < methods.length; i++ )
+		elementProto[ methods[ i ] ] = CKEDITOR.tools.override( elementProto[ methods[ i ] ], dirChangeNotifier );
+} )();
+
+/**
+ * Fired when the language direction of an element is changed.
+ *
+ * @event dirChanged
+ * @member CKEDITOR.editor
+ * @param {CKEDITOR.editor} editor This editor instance.
+ * @param data
+ * @param {CKEDITOR.dom.node} data.node The element that is being changed.
+ * @param {String} data.dir The new direction.
+ */
+
+/**
+ * Fired when the language direction in the specific cursor position is changed
+ *
+ * @event contentDirChanged
+ * @member CKEDITOR.editor
+ * @param {CKEDITOR.editor} editor This editor instance.
+ * @param {String} data The direction in the current position.
+ */

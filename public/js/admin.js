@@ -268,18 +268,22 @@
 			 */
 			saveItem: function()
 			{
+				console.log("viewModel.saveItem");
 				var self = this,
 					saveData = ko.mapping.toJS(self);
 
 				saveData._token = csrf;
 
 				//if this is a new item, delete the primary key from the data array
+				console.log("if this is a new item, delete the primary key from the data array");
 				if (!saveData[self.primaryKey])
 					delete saveData[self.primaryKey];
 
 				//iterate over the edit fields and ensure that the belongs_to relationships are false if they are an empty string
+				console.log("iterate over the edit fields and ensure that the belongs_to relationships are false if they are an empty string");
 				$.each(self.editFields(), function(ind, field)
 				{
+					console.log("viewModel.saveItem.each");
 					if (field.relationship && !field.external && saveData[field.field_name] === '')
 					{
 						saveData[field.field_name] = false;
@@ -296,11 +300,13 @@
 					type: 'POST',
 					complete: function()
 					{
+						console.log("saveItem-ajax-complete")	
 						self.freezeForm(false);
 						window.admin.resizePage();
 					},
 					success: function(response)
 					{
+						console.log("saveItem-ajax-success")	
 						if (response.success) {
 							self.statusMessage(self.languages['saved']).statusMessageType('success');
 							self.updateRows();
@@ -309,6 +315,7 @@
 
 							setTimeout(function()
 							{
+								console.log("saveItem-ajax-success-setTimeout");
 								History.pushState({modelName: self.modelName()}, null, route + self.modelName());
 							}, 200);
 						}
@@ -323,6 +330,7 @@
 			 */
 			deleteItem: function()
 			{
+				console.log("viewModel.deleteItem");
 				var self = this,
 					conf = confirm(self.languages['delete_active_item']);
 
@@ -339,10 +347,12 @@
 					type: 'POST',
 					complete: function()
 					{
+						console.log("deleteItem-ajax-complete")
 						window.admin.resizePage();
 					},
 					success: function(response)
 					{
+						console.log("deleteItem-ajax-success")
 						if (response.success)
 						{
 							self.statusMessage(self.languages['deleted']).statusMessageType('success');
@@ -351,6 +361,7 @@
 
 							setTimeout(function()
 							{
+								console.log("deleteItem-ajax-success-setTimeout");
 								History.pushState({modelName: self.modelName()}, null, route + self.modelName());
 							}, 500);
 						}
@@ -365,6 +376,7 @@
 			 */
 			clickItem: function(id)
 			{
+				console.log("viewModel.clickItem");
 				if (!this.loadingItem() && this.activeItem() !== id && this.actionPermissions.view)
 				{
 					History.pushState({modelName: this.modelName(), id: id}, null, route + this.modelName() + '/' + id);
@@ -378,24 +390,30 @@
 			 */
 			getItem: function(id)
 			{
+				console.log("viewModel.getItem");
 				var self = this;
 
 				self.loadingItem(true);
 
 				//override the edit fields to the original non-existent model
+				console.log("override the edit fields to the original non-existent model");
 				adminData.edit_fields = self.originalEditFields;
 				self.editFields(window.admin.prepareEditFields());
 
 				//make sure constraints are only loaded once
+				console.log("make sure constraints are only loaded once");
 				self.holdConstraintsQueue = true;
 
 				//update all the info to the new item state
+				console.log("update all the info to the new item state");
 				ko.mapping.updateData(self, self.model, self.model);
 
 				//scroll to the top of the page
+				console.log("scroll to the top of the page");
 				$('html, body').animate({scrollTop: 0}, 'fast')
 
 				//if this is a new item (id is falsy), just overwrite the viewModel with the original data model
+				console.log("if this is a new item (id is falsy), just overwrite the viewModel with the original data model");
 				if (!id)
 				{
 					self.setUpNewItem();
@@ -403,6 +421,7 @@
 				}
 
 				//freeze the relationship constraint updates
+				console.log("freeze the relationship constraint updates");
 				self.freezeConstraints = true;
 
 				self.itemLoadingId(id);
@@ -413,6 +432,7 @@
 					success: function(data)
 					{
 						//if there was an error, kick out
+						console.log("if there was an error, kick out");
 						if (data.success === false && data.errors)
 						{
 							alert(data.errors);
@@ -422,6 +442,7 @@
 						if (self.itemLoadingId() !== id)
 						{
 							//if there are no currently-loading items, clear the form
+							console.log("if there are no currently-loading items, clear the form");
 							if (self.itemLoadingId() === null)
 							{
 								self.loadingItem(false);
@@ -439,15 +460,18 @@
 			 */
 			setUpNewItem: function()
 			{
+				console.log("viewModel.setUpNewItem");
 				this.itemLoadingId(null);
 				this.activeItem(0);
 
 				//set the last item property which helps manage the animation states
+				console.log("set the last item property which helps manage the animation states");
 				this.lastItem = 0;
 
 				this.loadingItem(false);
 
 				//run the constraints queue
+				console.log("run the constraints queue");
 				window.admin.runConstraintsQueue();
 			},
 
@@ -459,23 +483,29 @@
 			 */
 			setData: function(data)
 			{
+				console.log("viewModel.setData");
 				var self = this;
 
 				//set the active item and update the model data
+				console.log("set the active item and update the model data");
 				self.activeItem(data[self.primaryKey]);
 				self.loadingItem(false);
 
 				//update the edit fields
+				console.log("update the edit fields");
 				adminData.edit_fields = data.administrator_edit_fields;
 				self.editFields(window.admin.prepareEditFields());
 
 				//update the actions and the action permissions
+				console.log("update the actions and the action permissions");
 				self.actions(data.administrator_actions);
 				self.actionPermissions = data.administrator_action_permissions;
 
 				//set the new options for relationships
+				console.log("set the new options for relationships");
 				$.each(adminData.edit_fields, function(ind, el)
 				{
+					console.log("viewModel.setData.each");
 					if (el.relationship && el.autocomplete)
 					{
 						self[el.field_name + '_autocomplete'] = data[el.field_name + '_autocomplete'];
@@ -483,30 +513,41 @@
 				});
 
 				//set the item link if it exists
+				console.log("set the item link if it exists");
 				if (data.admin_item_link)
 				{
 					self.itemLink(data.admin_item_link);
 				}
 
 				//set the last item property which helps manage the animation states
+				console.log("set the last item property which helps manage the animation states");
 				self.lastItem = data[self.primaryKey];
 
 				//fixes an error where the relationships wouldn't load
+				console.log("fixes an error where the relationships wouldn't load");
 				setTimeout(function()
 				{
+					console.log("setData-setTimeout start");
+
 					//first clear the data
+					console.log("first clear the data");
 					ko.mapping.updateData(self, self.model, self.model);
 
 					//then update the data
+					console.log("then update the data");
 					ko.mapping.updateData(self, self.model, data);
 
 					//unfreeze the relationship constraint updates
+					console.log("unfreeze the relationship constraint updates");
 					self.freezeConstraints = false;
 
 					window.admin.resizePage();
 
 					//run the constraints queue
+					console.log("run the constraints queue");
 					window.admin.runConstraintsQueue();
+
+					console.log("setData-setTimeout end");
 				}, 50);
 			},
 
@@ -515,6 +556,7 @@
 			 */
 			closeItem: function()
 			{
+				console.log("viewModel.closeItem");
 				History.pushState({modelName: this.modelName()}, null, route + this.modelName());
 			},
 
@@ -523,6 +565,7 @@
 			 */
 			clearItem: function()
 			{
+				console.log("viewModel.clearItem");
 				this.freezeForm(false);
 				this.statusMessage('');
 				this.statusMessageType('');
@@ -537,6 +580,7 @@
 			 */
 			addNewItem: function()
 			{
+				console.log("viewModel.addNewItem");
 				//$('#users_list').resetSelection();
 				this.getItem(0);
 			},
@@ -551,11 +595,13 @@
 			 */
 			customAction: function(isItem, action, messages, confirmation)
 			{
+				console.log("viewModel.customAction");
 				var self = this,
 					data = {_token: csrf, action_name: action},
 					url;
 
 				//if a confirmation string was supplied, flash it in a confirm()
+				console.log("if a confirmation string was supplied, flash it in a confirm()");
 				if (confirmation)
 				{
 					if (!confirm(confirmation))
@@ -565,12 +611,14 @@
 				//if this is an item action (compared to a global model action), set the proper url
 				if (isItem)
 				{
+					console.log("if this is an item action (compared to a global model action), set the proper url");
 					url = base_url + self.modelName() + '/' + self[self.primaryKey]() + '/custom_action';
 					self.statusMessage(messages.active).statusMessageType('');
 				}
 				//otherwise set the url and add the filters
 				else
 				{
+					console.log("otherwise set the url and add the filters");
 					url = base_url + self.modelName() + '/custom_action';
 					data.sortOptions = self.sortOptions;
 					data.filters = self.getFilters();
@@ -587,10 +635,12 @@
 					type: 'POST',
 					complete: function()
 					{
+						console.log("viewModel.customAction.ajax-complete");
 						self.freezeForm(false);
 					},
 					success: function(response)
 					{
+						console.log("viewModel.customAction.ajax-success");
 						if (response.success)
 						{
 							if (isItem)
@@ -604,10 +654,12 @@
 							}
 
 							// if this is a redirect, redirect the user to the supplied url
+							console.log(" if this is a redirect, redirect the user to the supplied url");
 							if (response.redirect)
 								window.location.href = response.redirect;
 
 							//if there was a file download initiated, redirect the user to the file download address
+							console.log("if there was a file download initiated, redirect the user to the file download address");
 							if (response.download)
 								self.downloadFile(response.download);
 
@@ -631,6 +683,7 @@
 			 */
 			downloadFile: function(url)
 			{
+				console.log("viewModel.downloadFile");
 				var hiddenIFrameId = 'hiddenDownloader',
 					iframe = document.getElementById(hiddenIFrameId);
 
@@ -653,6 +706,7 @@
 			 */
 			updateRows: function()
 			{
+				console.log("viewModel.updateRows");
 				var self = this,
 					id = ++self.rowLoadingId,
 					data = {
@@ -663,14 +717,17 @@
 					};
 
 				//if the page hasn't been initialized yet, don't update the rows
+				console.log("if the page hasn't been initialized yet, don't update the rows");
 				if (!this.initialized())
 					return;
 
 				//if we're on page 0 (i.e. there is currently no result set, set the page to 1)
+				console.log("if we're on page 0 (i.e. there is currently no result set, set the page to 1)");
 				if (!data.page)
 					data.page = 1;
 
 				//set loadingRows to true so that the loading box comes up
+				console.log("set loadingRows to true so that the loading box comes up");
 				self.loadingRows(true);
 
 				$.ajax({
@@ -681,12 +738,14 @@
 					success: function(response)
 					{
 						//if the row loading id has changed, that means it's old...so don't use this data
+						console.log("if the row loading id has changed, that means it's old...so don't use this data");
 						if (self.rowLoadingId !== id)
 						{
 							return;
 						}
 
 						//otherwise the rows aren't loading anymore and we can replace the data
+						console.log("otherwise the rows aren't loading anymore and we can replace the data");
 						self.pagination.page(response.last ? response.page : response.last);
 						self.pagination.last(response.last);
 						self.pagination.total(response.total);
@@ -703,12 +762,16 @@
 			 */
 			setSortOptions: function(field)
 			{
+				console.log("viewModel.setSortOptions");
 				//check if the field is a valid column
+				console.log("check if the field is a valid column");
 				var found = false;
 
 				//iterate over the columns to check if it's a valid sort_field or field
+				console.log("iterate over the columns to check if it's a valid sort_field or field");
 				$.each(this.columns(), function(i, col)
 				{
+					console.log("viewModel.setSortOptions.each");
 					if (field === col.sort_field || field === col.column_name)
 					{
 						found = true;
@@ -720,17 +783,24 @@
 					return false;
 
 				//the direction depends on the field
-				if (field == this.sortOptions.field())
+				console.log("the direction depends on the field");
+				if (field == this.sortOptions.field()) {
 					//reverse the direction
+					console.log("reverse the direction");
 					this.sortOptions.direction( (this.sortOptions.direction() == 'asc') ? 'desc' : 'asc' );
-				else
+				}
+				else {
 					//set the direction to asc
+					console.log("set the direction to asc");
 					this.sortOptions.direction('asc');
+				}
 
 				//update the field
+				console.log("update the field");
 				this.sortOptions.field(field);
 
 				//update the rows
+				console.log("update the rows");
 				this.updateRows();
 			},
 
@@ -741,11 +811,13 @@
 			 */
 			page: function(page)
 			{
+				console.log("viewModel.page");
 				var currPage = parseInt(this.pagination.page()),
 					newPage = 1,
 					lastPage = parseInt(this.pagination.last());
 
 				//if the value is 'prev' or 'next', increment or decrement
+				console.log("if the value is 'prev' or 'next', increment or decrement");
 				if (page === 'prev')
 				{
 					if (currPage > 1)
@@ -767,6 +839,7 @@
 				else if (!isNaN(parseInt(page)))
 				{
 					//set the page to the supplied value
+					console.log("set the page to the supplied value");
 					if (page > lastPage)
 					{
 						newPage = lastPage;
@@ -780,6 +853,7 @@
 				this.pagination.page(newPage);
 
 				//update the rows
+				console.log("update the rows");
 				this.updateRows();
 			},
 
@@ -790,6 +864,7 @@
 			 */
 			updateRowsPerPage: function(rows)
 			{
+				console.log("viewModel.updateRowsPerPage");
 				var self = this;
 
 				$.ajax({
@@ -799,6 +874,7 @@
 					type: 'POST',
 					complete: function()
 					{
+						console.log("updateRowsPerPage-ajax-complete")
 						self.updateRows();
 					}
 				});
@@ -809,11 +885,13 @@
 			 */
 			getFilters: function()
 			{
+				console.log("viewModel.getFilters");
 				var filters = [],
 					observables = ['value', 'min_value', 'max_value'];
 
 				$.each(window.admin.filtersViewModel.filters, function(ind, el)
 				{
+					console.log("viewModel.getFilters.each");
 					var filter = {
 						field_name: el.field_name,
 						type: el.type,
@@ -821,8 +899,10 @@
 					};
 
 					//iterate over the observables to see if we should include them
+					console.log("iterate over the observables to see if we should include them");
 					$(observables).each(function(i, obs)
 					{
+						console.log("viewModel.getFilters.obsevables.each");
 						if (this in el)
 						{
 							filter[this] = el[this]() ? el[this]() : null;
@@ -835,6 +915,7 @@
 					});
 
 					//push this filter onto the filters array
+					console.log("push this filter onto the filters array");
 					filters.push(filter);
 				});
 
@@ -846,11 +927,14 @@
 			 */
 			updateSelfRelationships: function()
 			{
+				console.log("viewModel.updateSelfRelationships");
 				var self = this;
 
 				//first we will iterate over the filters and update them if any exist
+				console.log("first we will iterate over the filters and update them if any exist");
 				$.each(window.admin.filtersViewModel.filters, function(ind, filter)
 				{
+					console.log("viewModel.updateSelfRelationships.each");
 					var fieldIndex = ind,
 						fieldName = filter.field_name;
 
@@ -869,11 +953,13 @@
 							}]},
 							complete: function()
 							{
+								console.log("updateSelfRelationships-ajax-complete");
 								window.admin.filtersViewModel.filters[fieldIndex].loadingOptions(false);
 							},
 							success: function(response)
 							{
 								//update the options
+								console.log("updateSelfRelationships-ajax-success");
 								window.admin.filtersViewModel.listOptions[fieldName](response[fieldName]);
 							}
 						});
@@ -882,11 +968,14 @@
 				});
 
 				//then we'll update the edit fields
+				console.log("then we'll update the edit fields");
 				$.each(self.editFields(), function(ind, field)
 				{
+					console.log("viewModel.updateSelfRelationships.each");
 					var fieldName = field.field_name;
 
 					//if there are no constraints for this field and if it is a self-relationship, update the options
+					console.log("if there are no constraints for this field and if it is a self-relationship, update the options");
 					if ((!field.constraints || !field.constraints.length) && field.self_relationship)
 					{
 						field.loadingOptions(true);
@@ -902,11 +991,13 @@
 							}]},
 							complete: function()
 							{
+								console.log("updateSelfRelationships-ajax-complete");
 								field.loadingOptions(false);
 							},
 							success: function(response)
 							{
 								//update the options
+								console.log("updateSelfRelationships-ajax-success");
 								self.listOptions[fieldName] = response[fieldName];
 							}
 						});
@@ -925,9 +1016,11 @@
 		 */
 		init: function()
 		{
+			console.log("init");
 			var self = this;
 
 			//set up the basic pieces of data
+			console.log("set up the basic pieces of data");
 			this.viewModel.model = adminData.data_model;
 			this.$container = $('#admin_content');
 
@@ -954,43 +1047,55 @@
 			this.viewModel.languages = adminData.languages;
 
 			//set up the rowsPerPageOptions
+			console.log("set up the rowsPerPageOptions");
 			for (var i = 1; i <= 100; i++)
 			{
 				this.viewModel.rowsPerPageOptions.push({id: i, text: i + ''});
 			}
 
 			//now that we have most of our data, we can set up the computed values
+			console.log("now that we have most of our data, we can set up the computed values");
 			this.initComputed();
 
 			//prepare the filters
+			console.log("prepare the filters");
 			this.filtersViewModel.filters = this.prepareFilters();
 
 			//prepare the edit fields
+			console.log("prepare the edit fields");
 			this.viewModel.originalEditFields = adminData.edit_fields;
 			this.viewModel.editFields(this.prepareEditFields());
 
 			//set up the relationships
+			console.log("set up the relationships");
 			this.initRelationships();
 
 			//set up the KO bindings
+			console.log("set up the KO bindings");
 			ko.applyBindings(this.viewModel, $('#content')[0]);
 			ko.applyBindings(this.filtersViewModel, $('#filters_sidebar_section')[0]);
 
 			//set up pushstate history
+			console.log("set up pushstate history");
 			this.initHistory();
 
 			//set up the subscriptions
+			console.log("set up the subscriptions");
 			this.initSubscriptions();
 
 			//set up the events
+			console.log("set up the events");
 			this.initEvents();
 
 			//run an initial page resize
+			console.log("run an initial page resize");
 			this.resizePage();
 
 			//finally run a timer to overcome bugs with select2
+			console.log("finally run a timer to overcome bugs with select2");
 			setTimeout(function()
 			{
+				console.log("init-setTimeout"),
 				self.viewModel.initialized(true);
 			}, 1000);
 
@@ -1004,15 +1109,19 @@
 		 */
 		prepareFilters: function()
 		{
+			console.log("prepareFilters");
 			var filters = [];
 
 			$.each(adminData.filters, function(ind, filter)
 			{
+				console.log("prepareFilters.each");
 				var observables = ['value', 'min_value', 'max_value'];
 
 				//iterate over the desired observables and check if they're there. if so, assign them an observable slot
+				console.log("iterate over the desired observables and check if they're there. if so, assign them an observable slot");
 				$.each(observables, function(i, obs)
 				{
+					console.log("prepareFilters.each.each");
 					if (obs in filter)
 					{
 						filter[obs] = ko.observable(filter[obs]);
@@ -1020,6 +1129,7 @@
 				});
 
 				//if this is a relationship field, we want to set up the loading options observable
+				console.log("if this is a relationship field, we want to set up the loading options observable");
 				if (filter.relationship)
 				{
 					filter.loadingOptions = ko.observable(false);
@@ -1040,12 +1150,14 @@
 		 */
 		prepareEditFields: function()
 		{
+			console.log("prepareEditFields");
 			var self = this,
 				fields = [];
 
 			$.each(adminData.edit_fields, function(ind, field)
 			{
 				//if this is a relationship field, set up the loadingOptions observable
+				console.log("if this is a relationship field, set up the loadingOptions observable");
 				if (field.relationship)
 				{
 					field.loadingOptions = ko.observable(false);
@@ -1053,6 +1165,7 @@
 				}
 
 				//if this is an image field, set the upload params
+				console.log("if this is an image field, set the upload params");
 				if (field.type === 'image' || field.type === 'file')
 				{
 					field.uploading = ko.observable(false);
@@ -1060,6 +1173,7 @@
 				}
 
 				//add the id field
+				console.log("add the id field");
 				field.field_id = 'edit_field_' + ind;
 
 				fields.push(field);
@@ -1075,11 +1189,13 @@
 		 */
 		prepareColumns: function()
 		{
+			console.log("prepareColumns");
 			var self = this,
 				columns = [];
 
 			$.each(adminData.column_model, function(ind, column)
 			{
+				console.log("prepareColumns.each");
 				column.visible = ko.observable(column.visible);
 				columns.push(column);
 			});
@@ -1092,18 +1208,23 @@
 		 */
 		initRelationships: function()
 		{
+			console.log("initRelationships");
 			var self = this;
 
 			//set up the filters
+			console.log("set up the filters");
 			$.each(adminData.filters, function(ind, el)
 			{
+				console.log("initRelationships.each");
 				if (el.relationship)
 					self.filtersViewModel.listOptions[ind] = ko.observableArray(el.options);
 			});
 
 			//set up the edit fields
+			console.log("set up the edit fields");
 			$.each(adminData.edit_fields, function(ind, el)
 			{
+				console.log("initRelationships.each");
 				if (el.relationship)
 					self.viewModel.listOptions[ind] = el.options;
 			});
@@ -1114,19 +1235,24 @@
 		 */
 		initSubscriptions: function()
 		{
+			console.log("initSubscriptions");
 			var self = this,
 				runFilter = function(val)
 				{
+					console.log("initSubscriptions-runFilter");
 					self.viewModel.updateRows();
 				};
 
 			//iterate over filters
+			console.log("iterate over filters");
 			$.each(self.filtersViewModel.filters, function(ind, filter)
 			{
 				//subscribe to the value field
+				console.log("subscribe to the value field");
 				self.filtersViewModel.filters[ind].value.subscribe(function(val)
 				{
 					//if this is an id field, make sure it's an integer
+					console.log("if this is an id field, make sure it's an integer");
 					if (self.filtersViewModel.filters[ind].type === 'key')
 					{
 						var intVal = isNaN(parseInt(val)) ? '' : parseInt(val);
@@ -1135,10 +1261,12 @@
 					}
 
 					//update the rows now that we've got new filters
+					console.log("update the rows now that we've got new filters");
 					self.viewModel.updateRows();
 				});
 
 				//check if there's a min and max value. if so, subscribe to those as well
+				console.log("check if there's a min and max value. if so, subscribe to those as well");
 				if ('min_value' in filter)
 				{
 					self.filtersViewModel.filters[ind].min_value.subscribe(runFilter);
@@ -1150,9 +1278,11 @@
 			});
 
 			//iterate over the edit fields
+			console.log("iterate over the edit fields");
 			$.each(self.viewModel.editFields(), function(ind, field)
 			{
 				//if there are constraints to maintain, set up the subscriptions
+				console.log("if there are constraints to maintain, set up the subscriptions");
 				if (field.constraints && self.getObjectSize(field.constraints))
 				{
 					self.establishFieldConstraints(field);
@@ -1160,14 +1290,18 @@
 			});
 
 			//subscribe to page change
+			console.log("subscribe to page change");
 			self.viewModel.pagination.page.subscribe(function(val)
 			{
+				console.log("initSubscriptions-anonym1");
 				self.viewModel.page(val);
 			});
 
 			//subscribe to rows per page change
+			console.log("subscribe to rows per page change");
 			self.viewModel.rowsPerPage.subscribe(function(val)
 			{
+				console.log("initSubscriptions-anonym2");
 				self.viewModel.updateRowsPerPage(parseInt(val));
 			});
 		},
@@ -1179,25 +1313,31 @@
 		 */
 		establishFieldConstraints: function(field)
 		{
+			console.log("establishFieldConstraints");
 			var self = this;
 
 			//we want to subscribe to changes on the OTHER fields since that's what defines changes to this one
+			console.log("we want to subscribe to changes on the OTHER fields since that's what defines changes to this one");
 			$.each(field.constraints, function(key, relationshipName)
 			{
+				console.log("establishFieldConstraints.each");
 				var fieldName = field.field_name,
 					f = field,
 					constraintsLength = self.getFieldConstraintsLength(key);
 
 				self.viewModel[key].subscribe(function(val)
 				{
+					console.log("establishFieldConstraints.each.subscribe");
 					if (self.viewModel.freezeConstraints || f.loadingOptions())
 						return;
 
 					//if this key hasn't been set up yet, set it
+					console.log("if this key hasn't been set up yet, set it");
 					if (!self.viewModel.constraintsQueue[key])
 						self.viewModel.constraintsQueue[key] = {};
 
 					//add the constraint to the queue
+					console.log("add the constraint to the queue");
 					self.viewModel.constraintsQueue[key][fieldName] = f;
 
 					var currentQueueLength = Object.keys(self.viewModel.constraintsQueue[key]).length;
@@ -1217,11 +1357,14 @@
 		 */
 		getFieldConstraintsLength: function(key)
 		{
+			console.log("getFieldConstraintsLength");
 			var length = 0;
 
 			//iterate over the edit fields until we find our match
+			console.log("iterate over the edit fields until we find our match");
 			$.each(this.viewModel.editFields(), function(ind, field)
 			{
+				console.log("getFieldConstraintsLength.each");
 				if (field.constraints && field.constraints[key])
 				{
 					length++;
@@ -1239,9 +1382,12 @@
 		 */
 		setConstrainerFreeze: function(key, freeze)
 		{
+			console.log("setConstrainerFreeze");
 			//iterate over the edit fields until we find our match
+			console.log("iterate over the edit fields until we find our match");
 			$.each(this.viewModel.editFields(), function(ind, field)
 			{
+				console.log("setConstrainerFreeze.each");
 				if (field.field_name === key)
 				{
 					field.constraintLoading(freeze);
@@ -1258,9 +1404,12 @@
 		 */
 		setFieldLoadingOptions: function(fieldName, type)
 		{
+			console.log("setFieldLoadingOptions");
 			//iterate over the edit fields until we find our match
+			console.log("iterate over the edit fields until we find our match");
 			$.each(this.viewModel.editFields(), function(ind, field)
 			{
+				console.log("setFieldLoadingOptions.each");
 				if (field.field_name === fieldName)
 				{
 					field.loadingOptions(type);
@@ -1274,14 +1423,17 @@
 		 */
 		runConstraintsQueue: function()
 		{
+			console.log("runConstraintsQueue");
 			var self = this,
 				fields = self.buildConstraintsFromQueue();
 
 			//if there are no fields, exit out
+			console.log("if there are no fields, exit out");
 			if (!fields.length)
 				return;
 
 			//freeze the actions
+			console.log("freeze the actions");
 			self.viewModel.freezeActions(true);
 
 			$.ajax({
@@ -1293,36 +1445,45 @@
 				},
 				complete: function()
 				{
+					console.log("runConstraintsQueue-ajax-complete");
 					self.viewModel.freezeActions(false);
 
 					$.each(self.viewModel.constraintsQueue, function(key, fieldConstraints)
 					{
+						console.log("runConstraintsQueue-ajax-complete.each");
 						$.each(fieldConstraints, function(fieldName, field)
 						{
+							console.log("runConstraintsQueue-ajax-complete.each.each");
 							self.setFieldLoadingOptions(fieldName, false);
 							self.setConstrainerFreeze(key, false);
 						});
 					});
 
 					//clear the constraints queue
+					console.log("clear the constraints queue");
 					self.viewModel.constraintsQueue = {};
 					self.viewModel.holdConstraintsQueue = false;
 				},
 				success: function(response)
 				{
+					console.log("runConstraintsQueue-ajax-success");
 					//iterate over the results and put them in the autocomplete array
+					console.log("iterate over the results and put them in the autocomplete array");
 					$.each(response, function(fieldName, el)
 					{
+						console.log("runConstraintsQueue-ajax-success.each");
 						var data = {};
 
 						$.each(el, function(i, e)
 						{
+							console.log("runConstraintsQueue-ajax-success.each.each");
 							data[e.id] = e;
 						});
 
 						self.viewModel[fieldName + '_autocomplete'] = data;
 
 						//update the options
+						console.log("update the options");
 						self.viewModel.listOptions[fieldName] = el;
 					});
 				}
@@ -1334,22 +1495,28 @@
 		 */
 		buildConstraintsFromQueue: function()
 		{
+			console.log("buildConstraintsFromQueue");
 			var self = this,
 				allConstraints = [];
 
 			$.each(self.viewModel.constraintsQueue, function(key, fieldConstraints)
 			{
+				console.log("buildConstraintsFromQueue.each");
 				$.each(fieldConstraints, function(fieldName, field)
 				{
+					console.log("buildConstraintsFromQueue.each.each");
 					var constraints = {};
 
 					//set the field to loading and freeze the constrainer
+					console.log("set the field to loading and freeze the constrainer");
 					self.setFieldLoadingOptions(fieldName, true);
 					self.setConstrainerFreeze(key, true);
 
 					//iterate over this field's constraints
+					console.log("iterate over this field's constraints");
 					$.each(field.constraints, function(key, relationshipName)
 					{
+						console.log("buildConstraintsFromQueue.each.each.each");
 						constraints[key] = self.viewModel[key]();
 					});
 
@@ -1370,44 +1537,57 @@
 		 */
 		initEvents: function()
 		{
+			console.log("initEvents");
 			var self = this;
 
 			//clicking the new item button
+			console.log("clicking the new item button");
 			$('#content').on('click', 'div.results_header a.new_item', function(e)
 			{
+				console.log("initEvents.content.onclick");
 				e.preventDefault();
 				History.pushState({modelName: self.viewModel.modelName(), id: 0}, null, route + self.viewModel.modelName() + '/new');
 			});
 
 			//resizing the window
+			console.log("resizing the window");
 			$(window).resize(self.resizePage);
 
 			//set up the history event callback
+			console.log("set up the history event callback");
 			History.Adapter.bind(window,'statechange',function() {
 				var state = History.getState();
 
 				//if the ignore key is true, or if this is the inital state, exit out.
+				console.log("if the ignore key is true, or if this is the inital state, exit out.");
 				if (state.data.ignore || (state.data.init && !self.historyStarted))
 					return;
 
 
 				//if the model name is present
+				console.log("if the model name is present");
 				if ('modelName' in state.data)
 					//if that model name isn't the current model name, we are updating the model
-					if (state.data.modelName !== self.viewModel.modelName())
+					console.log("if that model name isn't the current model name, we are updating the model");
+					if (state.data.modelName !== self.viewModel.modelName()) {
 						//get the new model
+						console.log("get the new model");
 						self.viewModel.getNewModel(state.data);
+					}
 
 				//if the state data has an id field and if it's not the active item
+				console.log("if the state data has an id field and if it's not the active item");
 				if ('id' in state.data)
 				{
 					//get the new item (this includes when state.data.id === 0, which means it should be a new item)
+					console.log("get the new item (this includes when state.data.id === 0, which means it should be a new item)");
 					if (state.data.id !== self.viewModel.activeItem())
 						self.viewModel.getItem(state.data.id);
 				}
 				else
 				{
 					//otherwise, assume that the user wants to be taken back to the results page. close the form
+					console.log("otherwise, assume that the user wants to be taken back to the results page. close the form");
 					self.viewModel.clearItem();
 				}
 			});
@@ -1418,6 +1598,7 @@
 		 */
 		initHistory: function()
 		{
+			console.log("initHistory");
 			var historyData = {
 					modelName: this.viewModel.modelName(),
 					init: true
@@ -1425,11 +1606,14 @@
 				uri = route + this.viewModel.modelName();
 
 			//if the admin data had an id supplied, it means this is either the edit page or the new item page
+			console.log("if the admin data had an id supplied, it means this is either the edit page or the new item page");
 			if ('id' in adminData)
 			{
 				//if the view model hasn't been set up yet, wait for it to be set up
+				console.log("if the view model hasn't been set up yet, wait for it to be set up");
 				var timer = setInterval(function()
 				{
+					console.log("initHistory interval");
 					if (window.admin)
 					{
 						window.admin.viewModel.getItem(adminData.id);
@@ -1437,6 +1621,7 @@
 						uri += '/' + (historyData.id ? historyData.id : 'new');
 
 						//now call the same to trigger the statechange event
+						console.log("now call the same to trigger the statechange event");
 						History.pushState(historyData, null, uri);
 
 						clearInterval(timer);
@@ -1452,14 +1637,18 @@
 		 */
 		initComputed: function()
 		{
+			console.log("initComputed");
 			//pagination information
+			console.log("pagination information");
 			this.viewModel.pagination.isFirst = ko.computed(function()
 			{
+				console.log("initComputed anonym1");
 				return this.pagination.page() == 1;
 			}, this.viewModel);
 
 			this.viewModel.pagination.isLast = ko.computed(function()
 			{
+				console.log("initComputed anonym2");
 				return this.pagination.page() == this.pagination.last();
 			}, this.viewModel);
 
@@ -1474,6 +1663,7 @@
 		 */
 		getObjectSize: function(obj)
 		{
+			console.log("getObjectSize");
 			var size = 0, key;
 
 			for (key in obj)
@@ -1489,15 +1679,18 @@
 		 */
 		resizePage: function()
 		{
+			console.log("resizePage");
 			var winHeight = $(window).height(),
 				itemEditHeight = $('form.edit_form').height() + 50,
 				usedHeight = winHeight > itemEditHeight ? winHeight - 45 : itemEditHeight,
 				size = window.getComputedStyle(document.body, ':after').getPropertyValue('content');
 
 			//resize the page height
+			console.log("resize the page height");
 			$('#admin_page').css({minHeight: usedHeight});
 
 			//resize or scroll the data table
+			console.log("resize or scroll the data table");
 			if (window.admin) {
 				if (! window.admin.dataTableScrollable)
 					window.admin.resizeDataTable();
@@ -1511,6 +1704,7 @@
 		 */
 		scrollDataTable: function()
 		{
+			console.log("scrollDataTable");
 			if (!self.$tableContainer)
 			{
 				self.$tableContainer = $('div.table_container');
@@ -1518,9 +1712,11 @@
 			}
 
 			// exit if table is already wrapped
+			console.log("exit if table is already wrapped");
 			if (self.$dataTable.parent().hasClass('table_scrollable')) return true;
 
 			// wrap table within div.table_scrollable
+			console.log("wrap table within div.table_scrollable");
 			self.$dataTable.wrap('<div class="table_scrollable"></div>')
 		},
 
@@ -1529,6 +1725,7 @@
 		 */
 		resizeDataTable: function()
 		{
+			console.log("resizeDataTable");
 			var self = window.admin,
 				winWidth = $(window).width();
 
@@ -1539,22 +1736,28 @@
 			}
 
 			//grab the columns
+			console.log("grab the columns");
 			var columns = self.viewModel.columns();
 
 			//iterate over the column hide points to see if we should unhide any of them
+			console.log("iterate over the column hide points to see if we should unhide any of them");
 			$.each(self.columnHidePoints, function(i, el)
 			{
+				console.log("resizeDataTable.each");
 				if (el < winWidth)
 					columns[i].visible(true);
 			});
 
 			//walk backwards over the columns to determine which ones to hide
+			console.log("walk backwards over the columns to determine which ones to hide");
 			for (var i = columns.length - 1; i >= 2; i--)
 			{
 				//if the datatable is visible and the table is large than its container
+				console.log("if the datatable is visible and the table is large than its container");
 				if (columns.length >= 2 && self.$dataTable.is(':visible') && (self.$tableContainer.width() < self.$dataTable.width()) )
 				{
 					//we don't want to hide all the columns
+					console.log("we don't want to hide all the columns");
 					if (i <= 1)
 						return;
 					if (columns[i].visible())
@@ -1570,6 +1773,7 @@
 
 
 	//set up the admin instance
+	console.log("set up the admin instance");
 	$(function() {
 		if ($('#admin_page').length)
 			window.admin = new admin();

@@ -534,6 +534,7 @@
 	ko.bindingHandlers.wysiwyg = {
 		init: function (element, valueAccessor, allBindingsAccessor, context)
 		{
+			console.log("wysiwyg.init");
 			var options = valueAccessor(),
 				value = ko.utils.unwrapObservable(options.value),
 				$element = $(element),
@@ -555,13 +556,16 @@
 			//when the editor is loaded, we want to resize our page
 			editor.on('loaded', function()
 			{
+				console.log("editor.on.loaded");
 				setTimeout(function()
 				{
+					console.log("editor.on.loaded setTimeout");
 					window.admin.resizePage();
 				}, 50);
 
 				editor.on('resize', function()
 				{
+					console.log("editor.on.resize");
 					window.admin.resizePage();
 				});
 			});
@@ -569,6 +573,7 @@
 			//wire up the blur event to ensure our observable is properly updated
 			editor.focusManager.blur = function()
 			{
+				console.log("editor.focusManager.blur");
 				var observable = valueAccessor().value,
 					$el = $('#' + options.id);
 
@@ -580,6 +585,7 @@
 
 			//handle destroying an editor (based on what jQuery plugin does)
 	        ko.utils.domNodeDisposal.addDisposeCallback(element, function (test) {
+	        	console.log("ko.utils.domNodeDisposal.addDisposeCallback");
 	            var editor = editors[options.id];
 
 	            if (editor)
@@ -591,6 +597,7 @@
 		},
 		update: function (element, valueAccessor, allBindingsAccessor, context)
 		{
+			console.log("wysiwyg.update");
 			//handle programmatic updates to the observable
 			var options = valueAccessor(),
 				value = ko.utils.unwrapObservable(options.value),
@@ -602,14 +609,17 @@
 			//if there isn't a value, set the value immediately
 			if (!value)
 			{
+				console.log("there isn't a value, set the value immediately");
 				$element.html(value);
 				editor.setData(value);
 			}
 			//otherwise pause for a moment and then set it
 			else
 			{
+				console.log("pause for a moment and then set it");
 				setTimeout(function()
 				{
+					console.log("wysiwyg.update timeout")
 					$element.html(value);
 
 					if ($element.data('blur'))

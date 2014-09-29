@@ -1,1 +1,9 @@
-﻿CKEDITOR.plugins.setLang("smiley","mn",{options:"Smiley Options",title:"Тодорхойлолт оруулах",toolbar:"Тодорхойлолт"});
+﻿/*
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.md or http://ckeditor.com/license
+*/
+CKEDITOR.plugins.setLang( 'smiley', 'mn', {
+	options: 'Smiley Options', // MISSING
+	title: 'Тодорхойлолт оруулах',
+	toolbar: 'Тодорхойлолт'
+} );

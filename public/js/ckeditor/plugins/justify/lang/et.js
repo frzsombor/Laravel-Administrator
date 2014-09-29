@@ -1,1 +1,10 @@
-﻿CKEDITOR.plugins.setLang("justify","et",{block:"Rööpjoondus",center:"Keskjoondus",left:"Vasakjoondus",right:"Paremjoondus"});
+﻿/*
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.md or http://ckeditor.com/license
+*/
+CKEDITOR.plugins.setLang( 'justify', 'et', {
+	block: 'Rööpjoondus',
+	center: 'Keskjoondus',
+	left: 'Vasakjoondus',
+	right: 'Paremjoondus'
+} );

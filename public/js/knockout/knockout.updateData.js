@@ -19,6 +19,7 @@
 	 * @return Object (returns the viewModel)
 	 */
 	ko.mapping.updateData = function(viewModel, dataModel, jsObject) {
+		console.log("ko.mapping.updateData");
 		if (arguments.length < 3) throw new Error("When calling ko.updateData, pass: the view model, the data model, and the updated data.");
 		if (!viewModel) throw new Error("The view model is undefined.");
 
