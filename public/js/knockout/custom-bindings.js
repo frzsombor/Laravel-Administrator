@@ -597,7 +597,7 @@
 		},
 		update: function (element, valueAccessor, allBindingsAccessor, context)
 		{
-			console.debug("wysiwyg.update");
+			console.log("wysiwyg.update");
 			//handle programmatic updates to the observable
 			var options = valueAccessor(),
 				value = ko.utils.unwrapObservable(options.value),
@@ -609,30 +609,31 @@
 			//if there isn't a value, set the value immediately
 			if (!value)
 			{
-				console.debug("there isn't a value, set the value immediately");
+				console.log("there isn't a value, set the value immediately");
 				$element.html(value);
-				editor.setData(value);
+				editor.setData(value, function(){ console.log("setData callback - dataReady"); });
 			}
 			//otherwise pause for a moment and then set it
 			else
 			{
-				console.debug("pause for a moment and then set it");
+				console.log("pause for a moment and then set it");
+				$element.html(value);
+
 				setTimeout(function()
 				{
-					console.debug("wysiwyg.update timeout");
-					$element.html(value);
+					console.log("wysiwyg.update timeout");
 
 					if ($element.data('blur')) {
-						console.debug("wysiwyg.update timeout remove-blur");
+						console.log("wysiwyg.update timeout remove-blur");
 						$element.removeData('blur');
 					}
 					else {
-						console.debug("wysiwyg.update timeout setData");
-						console.debug(editor);
-						console.debug("editor.status: " + editor.status);
-						console.debug("editor.instanceReady: " + editor.instanceReady);
-						console.debug("editor.loaded: " + editor.loaded);
-						editor.setData(value);
+						console.log("wysiwyg.update timeout setData");
+						//console.log(editor);
+						console.log("editor.status: " + editor.status);
+						console.log("editor.instanceReady: " + editor.instanceReady);
+						console.log("editor.loaded: " + editor.loaded);
+						editor.setData(value, function(){ console.log("setData callback - dataReady"); });
 					}
 
 				}, 50);

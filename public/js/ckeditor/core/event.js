@@ -69,7 +69,7 @@ if ( !CKEDITOR.event ) {
 			// Get the listener index for a specified function.
 			// Returns -1 if not found.
 			getListenerIndex: function( listenerFunction ) {
-				console.log("eventEntry.prototype.getListenerIndex");
+				// console.log("eventEntry.prototype.getListenerIndex");
 				for ( var i = 0, listeners = this.listeners; i < listeners.length; i++ ) {
 					if ( listeners[ i ].fn == listenerFunction )
 						return i;
@@ -164,7 +164,7 @@ if ( !CKEDITOR.event ) {
 
 				if ( event.getListenerIndex( listenerFunction ) < 0 ) {
 					// Get the listeners.
-					console.log("Get the listeners.");
+					// console.log("Get the listeners.");
 					var listeners = event.listeners;
 
 					// Fill the scope.
@@ -285,7 +285,6 @@ if ( !CKEDITOR.event ) {
 					stopped = canceled = 0;
 
 					if ( event ) {
-						console.log("CKEDITOR.event.return.fire.return.if event"+event);
 						var listeners = event.listeners;
 
 						if ( listeners.length ) {

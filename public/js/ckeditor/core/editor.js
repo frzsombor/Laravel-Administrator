@@ -951,6 +951,7 @@
 			// Fire "setData" so data manipulation may happen.
 			var eventData = { dataValue: data };
 			console.log("Fire \"setData\" so data manipulation may happen.");
+			console.log(data);
 			!internal && this.fire( 'setData', eventData );
 
 			this._.data = eventData.dataValue;
