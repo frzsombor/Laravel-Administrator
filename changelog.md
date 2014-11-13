@@ -1,12 +1,35 @@
 ## Changelog
 
+### 4.14.2
+- Bugfix: Query clauses in the newQuery method for models was throwing errors if bindings were involved
+
+### 4.14.1
+- Bugfix: when validating all rules against all attributes for existing models, "exists" and "unique" rules would cause problems
+
+### 4.14.0
+- New translations (hr, nb)
+- Bugfix: The Spanish translation had an issue with noun genders
+- Bugfix: Visible option wasn't previously working with filters
+- Bugfix: The front-end form should now resize to its correct height at all times
+- Bugfix: If relationships defined an alternate primary key on the foreign table, Administrator would always just grab the model's primary key name
+
+### 4.13.0
+- Field descriptions can now be provided in addition to the labels
+- Bugfix: There were some styling issues due to applying styles at the body level
+- Bugfix: Dates in time fields before 1902 were previously not possible
+- Bugfix: MS opacity declaration was making it impossible to build the LESS
+- Bugfix: Hungarian and Serbian languages had some errors
+- Bugfix: It should now be possible to use custom validation rules and messages
+- Bugfix: Model validation would previously only check the dirty attributes of existing models. It now checks everything.
+- Bugfix: When setting the database.fetch config as PDO::FETCH_ASSOC, administrator would incorrectly try to access the count query results as an object
+
 ### 4.12.1
 - Bugfix: Revert Merge #601 and adds back in select2 for filter booleans due to 3 needed options True, False, Both
 - Bugfix: Fix Js for non numeric ids
 
 ### 4.12.0
 - Added CKEditor to composer to keep updated
-- Added Scrollable Data Table ranther than dropping the columns
+- Added Scrollable Data Table rather than dropping the columns
 - Added the use of checkboxes for boolean filters
 - Added the ability to create select2 translation files
 - Added Arabic Translation files
